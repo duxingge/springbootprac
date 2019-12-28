@@ -29,12 +29,6 @@ public class UserService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.getUserByUsername(username);
-//        List<UserRole> userRoles = userRoleRepository.getUserRolesByUid(user.getId());
-//        List roleIdList = new ArrayList();
-//        for (UserRole userRole : userRoles) {
-//            roleIdList.add(userRole.getRid());
-//        }
-//        List roleList = roleRepository.getRolesByIdIn(roleIdList);
         if(user==null) {
             throw new UsernameNotFoundException("账户不存在");
         }

@@ -1,6 +1,8 @@
 package com.wjx.springbootprac.conf;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.wjx.springbootprac.compoment.CustomAccessDecisionManager;
+import com.wjx.springbootprac.compoment.CustomFilterInvocationSecurityMetadataSource;
 import com.wjx.springbootprac.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -8,6 +10,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.LockedException;
+import org.springframework.security.config.annotation.ObjectPostProcessor;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -15,6 +18,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
@@ -32,10 +36,25 @@ public class MyWebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     UserService userService;
 
+    //加密算法
     @Bean
     PasswordEncoder passwordEncoder() {
         return NoOpPasswordEncoder.getInstance();
     }
+
+    @Bean
+    //菜单角色资源Bean
+    CustomFilterInvocationSecurityMetadataSource fisms(){
+        return new CustomFilterInvocationSecurityMetadataSource();
+    }
+    @Bean
+    //访问请求过滤管理Bean
+    CustomAccessDecisionManager adm() {
+        return new CustomAccessDecisionManager();
+    }
+
+
+
 
 //    @Override
 //    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -54,10 +73,21 @@ public class MyWebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers("/admin/**")
-                .hasRole("admin")
-                .antMatchers("/user/**")
-                .hasRole("user")
+                //静态配置权限
+//                .antMatchers("/admin/**")
+//                .hasRole("admin")
+//                .antMatchers("/user/**")
+//                .hasRole("user")
+                //动态配置权限
+                .withObjectPostProcessor(new ObjectPostProcessor<FilterSecurityInterceptor>() {
+
+                    @Override
+                    public <O extends FilterSecurityInterceptor> O postProcess(O object) {
+                        object.setSecurityMetadataSource(fisms());
+                        object.setAccessDecisionManager(adm());
+                        return object;
+                    }
+                })
                 .anyRequest()//任何请求
                 .authenticated()//都要验证
                 .and()
@@ -111,4 +141,5 @@ public class MyWebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf()
                 .disable();
     }
+
 }
