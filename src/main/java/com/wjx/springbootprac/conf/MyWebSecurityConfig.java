@@ -1,8 +1,8 @@
 package com.wjx.springbootprac.conf;
 
-import com.alibaba.druid.support.json.JSONUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.wjx.springbootprac.util.ResultUtil;
+import com.wjx.springbootprac.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -23,24 +23,32 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
 
 @Configuration
 public class MyWebSecurityConfig extends WebSecurityConfigurerAdapter {
 
+    @Autowired
+    UserService userService;
+
     @Bean
     PasswordEncoder passwordEncoder() {
         return NoOpPasswordEncoder.getInstance();
     }
 
+//    @Override
+//    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+//        auth.inMemoryAuthentication()
+//                .withUser("wjx").password("1").roles("ADMIN","USER")
+//                .and()
+//                .withUser("wjx2").password("1").roles("USER");
+//    }
+
+
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.inMemoryAuthentication()
-                .withUser("wjx").password("1").roles("ADMIN","USER")
-                .and()
-                .withUser("wjx2").password("1").roles("USER");
+       auth.userDetailsService(userService);
     }
 
     @Override
@@ -65,7 +73,7 @@ public class MyWebSecurityConfig extends WebSecurityConfigurerAdapter {
                        response.setContentType("application/json;charset=utf-8");
                        response.setStatus(200);
                        PrintWriter out = response.getWriter();
-                       Map m = new HashMap();
+                       Map<String,Object> m = new HashMap();
                        m.put("status","200");
                        m.put("msg",principal);
                        ObjectMapper om = new ObjectMapper();
@@ -77,11 +85,11 @@ public class MyWebSecurityConfig extends WebSecurityConfigurerAdapter {
                 })
                 .failureHandler(new AuthenticationFailureHandler() {
                     @Override
-                    public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException e) throws IOException, ServletException {
+                    public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException e) throws IOException{
                         response.setContentType("application/json;charset=utf-8");
                         response.setStatus(401);
                         PrintWriter out = response.getWriter();
-                        Map m = new HashMap();
+                        Map<String,String> m = new HashMap();
                         m.put("status","401");
                         if(e instanceof LockedException) {
                             m.put("msg","用户已被锁定");
@@ -99,10 +107,8 @@ public class MyWebSecurityConfig extends WebSecurityConfigurerAdapter {
 
                 .permitAll()//登录相关接口不用验证
                 .and()
-                //csrf关闭，不然使用自定义登录页301
+                //csrf关闭，不然使用自定义登录页报301
                 .csrf()
                 .disable();
-
-
     }
 }
