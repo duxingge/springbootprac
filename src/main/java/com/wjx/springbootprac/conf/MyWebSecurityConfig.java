@@ -55,9 +55,9 @@ public class MyWebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
                 .antMatchers("/admin/**")
-                .hasRole("ADMIN")
-                .antMatchers("/USER/**")
-                .hasRole("USER")
+                .hasRole("admin")
+                .antMatchers("/user/**")
+                .hasRole("user")
                 .anyRequest()//任何请求
                 .authenticated()//都要验证
                 .and()

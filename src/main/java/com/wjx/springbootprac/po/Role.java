@@ -13,7 +13,7 @@ public class Role {
     private Integer id;
 
     /**
-      *角色名英文
+      *角色名英文,注意角色名有ROLE_前缀，否则无效
       */
     private String name;
     /**
