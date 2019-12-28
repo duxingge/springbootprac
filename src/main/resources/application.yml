@@ -15,3 +15,6 @@ spring:
     database: mysql
     hibernate:
       ddl-auto: update
+server:
+  servlet:
+    context-path: /prac
