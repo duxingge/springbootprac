@@ -20,6 +20,5 @@ public class ExceptionHandle {
             System.out.println("系统异常");
             return ResultUtil.error("-1","未知错误");
         }
-
     }
 }
