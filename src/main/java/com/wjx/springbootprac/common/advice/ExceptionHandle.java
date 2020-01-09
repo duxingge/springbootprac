@@ -1,7 +1,7 @@
-package com.wjx.springbootprac.advice;
+package com.wjx.springbootprac.common.advice;
 
-import com.wjx.springbootprac.Exception.TestException;
-import com.wjx.springbootprac.util.ResultUtil;
+import com.wjx.springbootprac.common.Exception.TestException;
+import com.wjx.springbootprac.common.util.ResultUtil;
 import com.wjx.springbootprac.vo.Result;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;

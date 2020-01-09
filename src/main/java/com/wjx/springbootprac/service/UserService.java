@@ -1,7 +1,5 @@
 package com.wjx.springbootprac.service;
 
-import com.wjx.springbootprac.Exception.TestException;
-import com.wjx.springbootprac.enums.ResultEnum;
 import com.wjx.springbootprac.po.User;
 import com.wjx.springbootprac.repository.RoleRepository;
 import com.wjx.springbootprac.repository.UserRepository;

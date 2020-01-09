@@ -1,6 +1,6 @@
-package com.wjx.springbootprac.Exception;
+package com.wjx.springbootprac.common.Exception;
 
-import com.wjx.springbootprac.enums.ResultEnum;
+import com.wjx.springbootprac.common.enums.ResultEnum;
 import lombok.Data;
 
 @Data

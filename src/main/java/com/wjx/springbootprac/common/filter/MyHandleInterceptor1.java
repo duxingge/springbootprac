@@ -1,4 +1,4 @@
-package com.wjx.springbootprac.filter;
+package com.wjx.springbootprac.common.filter;
 
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;

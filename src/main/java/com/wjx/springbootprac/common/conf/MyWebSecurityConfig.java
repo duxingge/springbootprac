@@ -1,8 +1,8 @@
-package com.wjx.springbootprac.conf;
+package com.wjx.springbootprac.common.conf;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.wjx.springbootprac.compoment.CustomAccessDecisionManager;
-import com.wjx.springbootprac.compoment.CustomFilterInvocationSecurityMetadataSource;
+import com.wjx.springbootprac.common.compoment.CustomAccessDecisionManager;
+import com.wjx.springbootprac.common.compoment.CustomFilterInvocationSecurityMetadataSource;
 import com.wjx.springbootprac.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;

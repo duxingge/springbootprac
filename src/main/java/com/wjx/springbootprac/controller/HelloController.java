@@ -2,7 +2,7 @@ package com.wjx.springbootprac.controller;
 
 import com.wjx.springbootprac.po.Book;
 import com.wjx.springbootprac.repository.JpaConnectTestRepository;
-import com.wjx.springbootprac.util.ResultUtil;
+import com.wjx.springbootprac.common.util.ResultUtil;
 import com.wjx.springbootprac.vo.BookVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

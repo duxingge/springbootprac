@@ -1,4 +1,4 @@
-package com.wjx.springbootprac.advice;
+package com.wjx.springbootprac.common.advice;
 
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.ControllerAdvice;

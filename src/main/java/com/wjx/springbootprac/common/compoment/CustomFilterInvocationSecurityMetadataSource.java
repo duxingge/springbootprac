@@ -1,4 +1,4 @@
-package com.wjx.springbootprac.compoment;
+package com.wjx.springbootprac.common.compoment;
 
 import com.wjx.springbootprac.po.Menu;
 import com.wjx.springbootprac.po.Role;

@@ -2,7 +2,7 @@ package com.wjx.springbootprac.controller;
 
 import com.wjx.springbootprac.po.Apple;
 import com.wjx.springbootprac.service.AppleService;
-import com.wjx.springbootprac.util.ResultUtil;
+import com.wjx.springbootprac.common.util.ResultUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;

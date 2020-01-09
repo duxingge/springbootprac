@@ -1,4 +1,4 @@
-package com.wjx.springbootprac.util;
+package com.wjx.springbootprac.common.util;
 
 import com.wjx.springbootprac.vo.Result;
 

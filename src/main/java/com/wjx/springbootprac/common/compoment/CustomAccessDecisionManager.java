@@ -1,4 +1,4 @@
-package com.wjx.springbootprac.compoment;
+package com.wjx.springbootprac.common.compoment;
 
 import org.springframework.security.access.AccessDecisionManager;
 import org.springframework.security.access.AccessDeniedException;

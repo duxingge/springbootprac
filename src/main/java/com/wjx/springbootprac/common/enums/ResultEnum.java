@@ -1,6 +1,4 @@
-package com.wjx.springbootprac.enums;
-
-import lombok.Data;
+package com.wjx.springbootprac.common.enums;
 
 public enum  ResultEnum {
     DEFAULT_ERROR("0","系统错误");
