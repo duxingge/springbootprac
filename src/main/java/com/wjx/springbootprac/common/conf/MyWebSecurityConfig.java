@@ -7,6 +7,7 @@ import com.wjx.springbootprac.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.LockedException;
@@ -42,13 +43,16 @@ public class MyWebSecurityConfig extends WebSecurityConfigurerAdapter {
         return NoOpPasswordEncoder.getInstance();
     }
 
+
+
+
     @Bean
-    //菜单角色资源Bean
+    //调用URL对象对应的角色资源Bean
     CustomFilterInvocationSecurityMetadataSource fisms(){
         return new CustomFilterInvocationSecurityMetadataSource();
     }
     @Bean
-    //访问请求过滤管理Bean
+    //访问决策管理器
     CustomAccessDecisionManager adm() {
         return new CustomAccessDecisionManager();
     }
@@ -92,8 +96,8 @@ public class MyWebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authenticated()//都要验证
                 .and()
                 .formLogin()
-                .loginPage("/login.html")
-                .loginProcessingUrl("/login")
+                .loginPage("/login.html")   //登陆页面地址
+                .loginProcessingUrl("/login")   //前台的表单登陆url，spring-security遇到这个url会用其内部的登陆逻辑去处理它
                 .usernameParameter("name")
                 .passwordParameter("pass")
                 .successHandler(new AuthenticationSuccessHandler() {

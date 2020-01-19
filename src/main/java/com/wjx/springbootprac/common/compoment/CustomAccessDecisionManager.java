@@ -6,9 +6,11 @@ import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.util.Collection;
-//菜单对应角色与用户角色信息对比，控制资源是否可以请求通过
+//定制决策管理器，菜单对应角色与用户角色信息对比，控制资源是否可以请求通过
 public class CustomAccessDecisionManager implements AccessDecisionManager {
     /**
      * 登录用户具备请求对应的角色信息直接return;不具备抛出AccessDeniedException
@@ -21,6 +23,7 @@ public class CustomAccessDecisionManager implements AccessDecisionManager {
     @Override
     public void decide(Authentication auth, Object object, Collection<ConfigAttribute> ca) throws AccessDeniedException, InsufficientAuthenticationException {
         Collection<? extends GrantedAuthority> auths = auth.getAuthorities();
+//        ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest().getSession()
         for (ConfigAttribute configAttribute : ca) {
             String role = configAttribute.getAttribute();
             if ("ROLE_LOGIN".equals(role)) {

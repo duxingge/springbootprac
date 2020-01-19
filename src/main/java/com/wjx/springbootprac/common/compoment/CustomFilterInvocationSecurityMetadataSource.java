@@ -13,6 +13,7 @@ import org.springframework.util.AntPathMatcher;
 
 import java.util.Collection;
 import java.util.List;
+//FilterInvocationSecurityMetadataSource 调用对象FilterInvoke
 //一个请求对应哪些角色
 @Component
 public class CustomFilterInvocationSecurityMetadataSource implements FilterInvocationSecurityMetadataSource {
