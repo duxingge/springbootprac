@@ -1,7 +1,11 @@
 spring:
   thymeleaf:
     cache: false
-    suffix: .html
+    suffix: .html #后缀
+    check-template: true  #检查存在
+    prefix: classpath:/templates/ #文件位置前缀
+    servlet:
+      content-type: text/html
   devtools:
     restart:
       enabled: true
