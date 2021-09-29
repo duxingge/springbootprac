@@ -1,4 +1,9 @@
 spring:
   rabbitmq:
     host: localhost
-    port: 5276
+    port: 5672
+  datasource:
+    url: jdbc:mysql://localhost:3306/wjxdb?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&zeroDateTimeBehavior=convertToNull&connectTimeout=2000&sessionVariables=character_set_connection=utf8mb4,character_set_client=utf8mb4
+    username: root
+    password: 123123
+    driver-class-name: com.mysql.cj.jdbc.Driver

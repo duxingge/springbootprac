@@ -3,6 +3,8 @@ package com.example.rabbitmq.config;
 import com.example.rabbitmq.util.JsonUtil;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageProperties;
+import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
+import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.MessageConversionException;
 import org.springframework.amqp.support.converter.SimpleMessageConverter;
@@ -12,9 +14,15 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RabbitmqConfig {
 
+
+    @Bean
+    ConnectionFactory getConnectionFactory() {
+        return new CachingConnectionFactory();
+    }
+
     @Bean
     RabbitTemplate getRabbitTemplate() {
-        RabbitTemplate rabbitTemplate = new RabbitTemplate();
+        RabbitTemplate rabbitTemplate = new RabbitTemplate(getConnectionFactory());
         //消息转换器（Object转化为josn，防止有未序列化的对象）
         rabbitTemplate.setMessageConverter(new SimpleMessageConverter(){
             @Override

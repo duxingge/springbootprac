@@ -1,6 +1,7 @@
 package com.example.javafunction.service;
 
-import com.example.common.util.JsonUtil;
+
+import java.util.Calendar;
 
 /**
  * @Author wangjiaxing
@@ -8,9 +9,12 @@ import com.example.common.util.JsonUtil;
  */
 public class Main {
     public static void main(String[] args) {
-        PersonStr p = new PersonStr();
-        p.setName("testName");
-        p.setStatuEnum("NOT_START");
-        Person p2 = JsonUtil.parse(JsonUtil.toString(p), Person.class);
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_YEAR, -1);
+        Long endTime = calendar.getTime().getTime();
+        calendar.add(Calendar.DAY_OF_YEAR, -1);
+        long fromTime = calendar.getTime().getTime();
+        System.out.println(endTime-fromTime);
+        System.out.println(60 * 60 * 24 * 1000);
     }
 }
