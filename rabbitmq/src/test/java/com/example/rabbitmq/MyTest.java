@@ -19,7 +19,23 @@ public class MyTest {
 
     @Test
     public void testjosn() {
-        accountService.add(1,new BigDecimal(20.00));
-        assert 1==1;
+        System.out.println(-1 << Integer.SIZE);
+        System.out.println(1 << Integer.SIZE);
+        System.out.println(2 << Integer.SIZE);
+        System.out.println(3 << Integer.SIZE);
+        System.out.println(4 << Integer.SIZE);
+
+    }
+
+
+
+
+    public static void main(String[] args) {
+        int count = Integer.SIZE - 3;
+        System.out.println(Integer.toBinaryString(-1 << count));
+        System.out.println(Integer.toBinaryString(1 << count));
+        System.out.println(Integer.toBinaryString(2 << count));
+        System.out.println(Integer.toBinaryString(3 << count));
+        System.out.println(Integer.toBinaryString(4 << count));
     }
 }

@@ -1,7 +1,9 @@
 package com.example.serviceclient.controller;
 
+import com.example.serviceclient.annotions.AccessLimiter;
 import com.example.serviceclient.feign.FileUploadFeign;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.script.RedisScript;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,6 +21,9 @@ public class FileUploadController {
     @Autowired
     private FileUploadFeign fileUploadFeign;
 
+    @Autowired
+    private RedisScript<Boolean> rateLimitScript;
+
     @GetMapping("test")
     public void testUploadFile() {
         try{
@@ -32,6 +37,12 @@ public class FileUploadController {
         }catch (Exception e) {
             e.printStackTrace();
         }
+
+    }
+
+    @GetMapping("limit")
+    @AccessLimiter(limit = 2)
+    public void limitTest() {
 
     }
 }
