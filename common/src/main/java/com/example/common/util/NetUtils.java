@@ -61,6 +61,8 @@ public class NetUtils {
             return HOST_ADDRESS;
         }
 
+        System.getProperty(PowerJobDKey.BIND_LOCAL_ADDRESS);
+
         String addressFromJVM = System.getProperty(PowerJobDKey.BIND_LOCAL_ADDRESS);
         if (StringUtils.isNotEmpty(addressFromJVM)) {
             log.info("[Net] use address from[{}]: {}", PowerJobDKey.BIND_LOCAL_ADDRESS, addressFromJVM);
