@@ -7,5 +7,6 @@ package com.example.common.util;
 public class TestUtil {
     public static void main(String[] args) {
         System.out.println("ss");
+        System.out.println("ss2 up");
     }
 }
