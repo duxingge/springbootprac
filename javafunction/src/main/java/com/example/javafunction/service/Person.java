@@ -8,6 +8,10 @@ public class Person {
     private LoanAuditStatuEnum statuEnum;
     private String name;
 
+    public void say() {
+        System.out.println("i am say");
+    }
+
     public LoanAuditStatuEnum getStatuEnum() {
         return statuEnum;
     }

@@ -6,6 +6,7 @@ import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
+import java.util.Date;
 
 /**
  * @Author wangjiaxing
@@ -24,7 +25,9 @@ public class SignUtil {
     public static void main(String[] args) {
 
         try {
-            System.out.println("result: "+ buildSign("7095da5445f04ac93", "1633497975647"));
+            String time = new Date().getTime() + "";
+            System.out.println(time );
+            System.out.println("result: "+ buildSign("f28d1e97a907cce", time));
 
         } catch (InvalidKeyException e) {
             e.printStackTrace();

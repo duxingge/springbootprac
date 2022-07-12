@@ -6,18 +6,17 @@ package com.example.serviceclient.pojo;
  */
 public class Book {
 
+    private String name;
 
-    public static void main(String[] args) {
-        try {
-            MyThread thread = new MyThread();
-            thread.start();
-            Thread.sleep(20);//modify 2000 to 20
-            thread.interrupt();//请求中断MyThread线程
-        } catch (InterruptedException e) {
-            System.out.println("main catch");
-            e.printStackTrace();
-        }
-        System.out.println("end!");
+    public Book(String name) {
+        this.name = name;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 }
