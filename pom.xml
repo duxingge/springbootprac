@@ -18,6 +18,8 @@
         <module>feign/feign-client-intf</module>
         <module>feign/feign-client</module>
         <module>hystrix/hystrix-callback</module>
+        <module>hystrix/hystrix-turbine</module>
+        <module>hystrix/hystrix-dashboard</module>
     </modules>
     <dependencyManagement>
         <dependencies>

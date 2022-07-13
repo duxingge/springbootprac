@@ -1,18 +1,13 @@
 package com.example.hystrixcallback.hystrix;
 
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
+import com.imooc.springcloud.IService;
+import org.springframework.cloud.openfeign.FeignClient;
 
 /**
  * @Author wangjiaxing
  * @Date 2022/7/13
  */
-@Slf4j
-@Service
-public class MyService {
+@FeignClient(name = "feign-client",fallback = Fallback.class)
+public interface MyService extends IService {
 
-    public void error() {
-        log.info("Fallback: I'm not a black sheep any more");
-        throw new RuntimeException("first fallback");
-    }
 }
