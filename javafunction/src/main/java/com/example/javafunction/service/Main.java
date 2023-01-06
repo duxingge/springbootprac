@@ -1,8 +1,7 @@
 package com.example.javafunction.service;
 
 
-import com.example.common.util.JsonUtil;
-
+import java.math.BigDecimal;
 
 /**
  * @Author wangjiaxing
@@ -11,6 +10,8 @@ import com.example.common.util.JsonUtil;
 public class Main {
 
     public static void main(String[] args) {
-        System.out.println(JsonUtil.toString(new Object()));
+        BigDecimal b1 = new BigDecimal(0.2);
+        BigDecimal b2 = new BigDecimal(0.2);
+        System.out.println("result"+ (b1 == b2));
     }
 }

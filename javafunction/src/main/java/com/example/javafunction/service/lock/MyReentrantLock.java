@@ -1,7 +1,5 @@
 package com.example.javafunction.service.lock;
 
-import sun.plugin.javascript.navig.FrameArray;
-
 import java.io.Serializable;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.AbstractQueuedSynchronizer;

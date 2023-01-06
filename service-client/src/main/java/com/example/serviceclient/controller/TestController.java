@@ -3,22 +3,22 @@ package com.example.serviceclient.controller;
 import com.example.common.util.JsonUtil;
 import com.example.serviceclient.CleanService;
 import com.example.serviceclient.feign.FeignTest;
-import com.example.serviceclient.pojo.Book;
-import com.example.serviceclient.pojo.MitraValidateTokenParam;
-import com.example.serviceclient.pojo.MitraValidateTokenResult;
-import com.example.serviceclient.pojo.People;
+import com.example.serviceclient.pojo.*;
 import com.example.serviceclient.service.TestService;
+import org.apache.commons.lang3.StringUtils;
 import org.assertj.core.util.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
@@ -42,7 +42,7 @@ public class TestController {
     private FeignTest feignTest;
 
     @GetMapping("/m1")
-    public String m1() {
+    private String m1() {
         System.out.println("sss");
         return "success";
     }
@@ -71,9 +71,10 @@ public class TestController {
 
     @GetMapping("/people")
     public People peopleBooks() {
-        People p = new People();
-        p.setMain(new Book("math"));
-        p.setBooks(Lists.newArrayList(new Book("code"),new Book("art")));
+        PeopleV2 p = new PeopleV2();
+        BookV2 b = new BookV2();
+        b.setV2Tag("v2");
+        p.setMain(b);
         return p;
     }
 
@@ -95,11 +96,17 @@ public class TestController {
                 .body(result);
     }
 
+    @PostMapping("/book")
+    public Object getBook(@RequestBody @Valid Book book) {
+        System.out.println(book.getPartnerName());
+        return book;
+    }
 
     public static void main(String[] args) throws IOException {
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(2020,2,28);
+
+        System.out.println(Lists.newArrayList("".split(",")).stream().filter(it-> StringUtils.isNotBlank(it)).collect(Collectors.toList()).size());
 
     }
+
 
 }

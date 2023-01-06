@@ -1,22 +1,38 @@
 package com.example.serviceclient.pojo;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
+
 /**
  * @Author wangjiaxing
  * @Date 2022/3/7
  */
 public class Book {
+    @JsonAlias(value = "name")
+    private String partnerName;
 
-    private String name;
+    @JsonAlias(value = "sok")
+    private Boolean isOk;
+
+    public Book() {
+    }
 
     public Book(String name) {
-        this.name = name;
+        this.partnerName = name;
     }
 
-    public String getName() {
-        return name;
+    public String getPartnerName() {
+        return partnerName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setPartnerName(String partnerName) {
+        this.partnerName = partnerName;
+    }
+
+    public Boolean getIsOk() {
+        return isOk;
+    }
+
+    public void setIsOk(Boolean ok) {
+        isOk = ok;
     }
 }

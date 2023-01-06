@@ -1,10 +1,12 @@
 package com.example.javafunction.service;
 
+import java.io.Serializable;
+
 /**
  * @Author wangjiaxing
  * @Date 2021/4/13
  */
-public class Person {
+public class Person implements Serializable {
     private LoanAuditStatuEnum statuEnum;
     private String name;
 
@@ -26,5 +28,13 @@ public class Person {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Person(LoanAuditStatuEnum statuEnum, String name) {
+        this.statuEnum = statuEnum;
+        this.name = name;
+    }
+
+    public Person() {
     }
 }

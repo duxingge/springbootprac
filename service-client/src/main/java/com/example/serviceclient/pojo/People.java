@@ -8,7 +8,6 @@ import java.util.List;
  */
 public class People {
     private Book main;
-    private List<Book> books;
 
     public Book getMain() {
         return main;
@@ -16,13 +15,5 @@ public class People {
 
     public void setMain(Book main) {
         this.main = main;
-    }
-
-    public List<Book> getBooks() {
-        return books;
-    }
-
-    public void setBooks(List<Book> books) {
-        this.books = books;
     }
 }
