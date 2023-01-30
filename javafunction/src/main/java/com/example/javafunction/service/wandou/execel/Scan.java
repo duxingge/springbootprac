@@ -8,6 +8,8 @@ import org.springframework.util.ResourceUtils;
 
 import java.io.*;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 /**
  * @Author wangjiaxing
@@ -17,10 +19,10 @@ import java.util.*;
 public class Scan {
     static Map<String,Integer> maps = new HashMap<>();
     static Set<String> ketSet = null;
-    static ArrayList<String> sortList;
-//    static final String scanPath= "classpath:csvserror";
-    static final String scanPath= "classpath:csvs";
-    static final String outFileName = "normal";
+    static ArrayList<String> headerSortList;
+    static final String scanPath= "classpath:csvserror";
+//    static final String scanPath= "classpath:csvs";
+    static final String outFileName = "exception";
     static Set<String> preLineSets = Sets.newHashSet("LV 24-Segment FS Values[%]","RV 24-Segment FS Values[%]","LV 24-Segment SI Values[%]","RV 24-Segment SI Values[%]","LV 24-Segment ED Values[mm]","RV 24-Segment ED Values[mm]");
     static List<String> coreList = Lists.newArrayList("Segment 1;","Segment 2;","Segment 3;","Segment 4;","Segment 5;","Segment 6;","Segment 7;","Segment 8;","Segment 9;","Segment 10;","Segment 11;","Segment 12;","Segment 13;","Segment 14;","Segment 15;","Segment 16;","Segment 17;","Segment 18;","Segment 19;","Segment 20;","Segment 21;","Segment 22;","Segment 23;","Segment 24;");
     static int nameIndex = 0;
@@ -77,31 +79,24 @@ public class Scan {
 
 
         ketSet = maps.keySet();
-        sortList = Lists.newArrayList(ketSet);
-        sortList.sort(String::compareTo);
+        headerSortList = Lists.newArrayList(ketSet);
+        headerSortList.sort(String::compareTo);
         List<String> sortPreLineSets = Lists.newArrayList(preLineSets);
         sortPreLineSets.sort(String::compareTo);
         for (String preLine : sortPreLineSets) {
             for (String core : coreList) {
                 maps.put(String.format("%s %s",preLine,core),3);
-                sortList.add(String.format("%s %s",preLine,core));
+                headerSortList.add(String.format("%s %s",preLine,core));
             }
         }
-
-        sortList.remove("Name");
-        sortList.add(0,"Name");
+        headerSortList.remove("Name");
+        headerSortList.add(0,"Name");
         nameIndex = 0;
     }
 
     public static void main(String[] args) throws IOException {
-//        Set<String> keys = Sets.newHashSet("Patient","Name","Exam Date","GA (clin)[w+d]","OB_AC_HADLOCK;AC (Hadlock)[cm]",
-//                "OB_BPD_HADLOCK;BPD (Hadlock)[cm]","OB_EFW;EFW (Hadlock)[]","OB_FL_HADLOCK;FL (Hadlock)[cm]","OB_HC_HADLOCK;HC (Hadlock)[cm]","OB_ZSCORE_VENTR_GLS.GLS_L;LV_ Global Strain[%]",
-//                "OB_ZSCORE_VENTR_GLS.GLS_R;RV_ Global Strain[%]","OB_ZSCORE_VENTR_FRAC.FRAC_L;LV_ Frac. Area change[%]","OB_ZSCORE_VENTR_FRAC.FRAC_R;RV_ Frac. Area change[%]","OB_ZSCORE_VENTR_EF.EF_L;LV_ EF[%]","OB_ZSCORE_VENTR_SV.SV_L;LV_ SV[ml]",
-//                "OB_ZSCORE_VENTR_SV_KG.SV_KG_L;LV_ SV/KG[ml/kg]","OB_ZSCORE_VENTR_CO.CO_L;LV_ CO[ml/min]","OB_ZSCORE_VENTR_CO_KG.CO_KG_L;LV_ CO/KG[ml/min/kg]");
-//        File outfile = new File("JayChou.txt");
-//        PrintWriter out = new PrintWriter(outfile, "UTF-8");
         List<Object> exportData = new ArrayList<Object>();
-        sortList.stream().forEach(it->{
+        headerSortList.stream().forEach(it->{
           exportData.add(it);
         });
         List<List<Object>> outputDatalist = new ArrayList<List<Object>>();
@@ -109,38 +104,37 @@ public class Scan {
 
         File file = ResourceUtils.getFile(scanPath);
 //        System.out.println(JsonUtil.toString(file.list()));
-        String preLineText = "";
-        for (File f : file.listFiles()) {
-            Map<String,String> fileValues = new HashMap<>();
-
+        List<Map<String, String>> allResult = Arrays.stream(file.listFiles()).map(subFile -> CompletableFuture.supplyAsync(() -> {
+            Map<String, String> fileValues = new HashMap<>();
+            String preLineText = "";
             String line = "";
             String SplitBy = ";";
             String[] lineArr;
-            try (BufferedReader br = new BufferedReader(new FileReader(f))) {
+            try (BufferedReader br = new BufferedReader(new FileReader(subFile))) {
                 while ((line = br.readLine()) != null) {
                     lineArr = line.split(SplitBy);
-                    String key = findKey(line, ketSet,preLineText);
-                    if(StringUtils.isNotBlank(key)) {
-//                        System.out.println();
-//                        out.println(String.format("  %s :  %s ",key,describe(key,lineArr[maps.get(key)-1])));
-                        List<Object> data=new ArrayList<Object>();
+                    String key = findKey(line, ketSet, preLineText);
+                    if (StringUtils.isNotBlank(key)) {
+                        List<Object> data = new ArrayList<Object>();
                         data.add(key);
-                        int index = maps.get(key)==null?2:maps.get(key) - 1;
-                        if(lineArr.length>index) {
+                        int index = maps.get(key) == null ? 2 : maps.get(key) - 1;
+                        if (lineArr.length > index) {
 //                            data.add(describe(key,lineArr.length>index?lineArr[maps.get(key)-1]:""));
-                            fileValues.put(key,describe(key,lineArr.length>index?lineArr[index]:""));
-                        }else {
-                            System.out.println("error column key "+ key +" line "+ line+  " file "+ f.getName());
+                            fileValues.put(key, describe(key, lineArr.length > index ? lineArr[index] : ""));
+                        } else {
+                            System.out.println("error column key " + key + " line " + line + " file " + subFile.getName());
                         }
                     }
-                    preLineText = updatePreLine(line,preLineText);
+                    preLineText = updatePreLine(line, preLineText);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            addToOut(outputDatalist,fileValues);
-            sortList(outputDatalist);
-        }
+            return fileValues;
+        })).map(c -> c.join()).collect(Collectors.toList());
+
+        addToOut(outputDatalist,allResult);
+        sortList(outputDatalist);
 //        out.close();
         String path = "/Users/wangjiaxing/IdeaProjects/springbootprac";
         String fileName = outFileName;
@@ -165,13 +159,15 @@ public class Scan {
         return (String) d1.get(nameIndex);
     }
 
-    private static void addToOut(List<List<Object>> outputDatalist, Map<String, String> fileValues) {
-        List<Object> rows = new ArrayList<>();
-        sortList.stream().forEach(it->{
-            String val = fileValues.get(it);
-            rows.add(val==null?"":val);
+    private static void addToOut(List<List<Object>> outputDatalist, List<Map<String, String>> allFileValues) {
+        allFileValues.parallelStream().forEach(fileValues-> {
+            List<Object> rows = new ArrayList<>();
+            headerSortList.stream().forEach(it->{
+                String val = fileValues.get(it);
+                rows.add(val==null?"":val);
+            });
+            outputDatalist.add(rows);
         });
-        outputDatalist.add(rows);
     }
 
     private static String describe(String key, String value) {
@@ -265,29 +261,6 @@ public class Scan {
         csvWriter.newLine();
     }
 
-//    public static void main(String[] args) {
-//        List<Object> exportData = new ArrayList<Object>();
-//        exportData.add("第一列");
-//        exportData.add("第二列");
-//        exportData.add("第三列");
-//        List<List<Object>> datalist = new ArrayList<List<Object>>();
-//        List<Object> data=new ArrayList<Object>();
-//        data.add("111");
-//        data.add("222");
-//        data.add("333");
-//        List<Object> data1=new ArrayList<Object>();
-//        data1.add("444");
-//        data1.add("555");
-//        data1.add("\t2020-09-16 01:15:16\t");
-//        datalist.add(data);
-//        datalist.add(data1);
-//        String path = "~/ttt/";
-//        String fileName = "文件导出";
-//
-//        File file = createCSVFile(exportData, datalist, path, fileName);
-//        String fileName2 = file.getName();
-//        System.out.println("文件名称：" + fileName2);
-//    }
 
         class SortItem {
             String filed;
