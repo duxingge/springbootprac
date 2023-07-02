@@ -11,7 +11,7 @@ import java.io.FileNotFoundException;
  */
 public class Rename {
     public static void main(String[] args) throws FileNotFoundException {
-        File file = ResourceUtils.getFile("classpath:csvserror");
+        File file = ResourceUtils.getFile("classpath:csvs");
         File[] files = file.listFiles();
         for (int i = 0; i < files.length; i++) {
             File file1 = files[i];

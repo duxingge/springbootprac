@@ -20,9 +20,9 @@ public class Scan {
     static Map<String,Integer> maps = new HashMap<>();
     static Set<String> ketSet = null;
     static ArrayList<String> headerSortList;
-    static final String scanPath= "classpath:csvserror";
+    static final String scanPath= "classpath:csvsnew";
 //    static final String scanPath= "classpath:csvs";
-    static final String outFileName = "exception";
+    static final String outFileName = "icp3";
     static Set<String> preLineSets = Sets.newHashSet("LV 24-Segment FS Values[%]","RV 24-Segment FS Values[%]","LV 24-Segment SI Values[%]","RV 24-Segment SI Values[%]","LV 24-Segment ED Values[mm]","RV 24-Segment ED Values[mm]");
     static List<String> coreList = Lists.newArrayList("Segment 1;","Segment 2;","Segment 3;","Segment 4;","Segment 5;","Segment 6;","Segment 7;","Segment 8;","Segment 9;","Segment 10;","Segment 11;","Segment 12;","Segment 13;","Segment 14;","Segment 15;","Segment 16;","Segment 17;","Segment 18;","Segment 19;","Segment 20;","Segment 21;","Segment 22;","Segment 23;","Segment 24;");
     static int nameIndex = 0;
