@@ -3,7 +3,9 @@ package com.example.javafunction.service.wandou.execel;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.google.common.io.Files;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.util.FileSystemUtils;
 import org.springframework.util.ResourceUtils;
 
 import java.io.*;
@@ -20,12 +22,14 @@ public class Scan {
     static Map<String,Integer> maps = new HashMap<>();
     static Set<String> ketSet = null;
     static ArrayList<String> headerSortList;
-    static final String scanPath= "classpath:csvsnew";
-//    static final String scanPath= "classpath:csvs";
+    static final String baseSourceName= "csvs";
+    static final String baseOutName= "csvsResult";
     static final String outFileName = "icp3";
     static Set<String> preLineSets = Sets.newHashSet("LV 24-Segment FS Values[%]","RV 24-Segment FS Values[%]","LV 24-Segment SI Values[%]","RV 24-Segment SI Values[%]","LV 24-Segment ED Values[mm]","RV 24-Segment ED Values[mm]");
     static List<String> coreList = Lists.newArrayList("Segment 1;","Segment 2;","Segment 3;","Segment 4;","Segment 5;","Segment 6;","Segment 7;","Segment 8;","Segment 9;","Segment 10;","Segment 11;","Segment 12;","Segment 13;","Segment 14;","Segment 15;","Segment 16;","Segment 17;","Segment 18;","Segment 19;","Segment 20;","Segment 21;","Segment 22;","Segment 23;","Segment 24;");
     static int nameIndex = 0;
+    private static final String outFileDic = "/Users/wangjiaxing/study/test-code/wandou/";
+
     static {
         maps.put("Name",3);
         maps.put("Patient",3);
@@ -95,54 +99,121 @@ public class Scan {
     }
 
     public static void main(String[] args) throws IOException {
-        List<Object> exportData = new ArrayList<Object>();
-        headerSortList.stream().forEach(it->{
-          exportData.add(it);
-        });
-        List<List<Object>> outputDatalist = new ArrayList<List<Object>>();
+        renameFile();
+        scan();
 
-
-        File file = ResourceUtils.getFile(scanPath);
-//        System.out.println(JsonUtil.toString(file.list()));
-        List<Map<String, String>> allResult = Arrays.stream(file.listFiles()).map(subFile -> CompletableFuture.supplyAsync(() -> {
-            Map<String, String> fileValues = new HashMap<>();
-            String preLineText = "";
-            String line = "";
-            String SplitBy = ";";
-            String[] lineArr;
-            try (BufferedReader br = new BufferedReader(new FileReader(subFile))) {
-                while ((line = br.readLine()) != null) {
-                    lineArr = line.split(SplitBy);
-                    String key = findKey(line, ketSet, preLineText);
-                    if (StringUtils.isNotBlank(key)) {
-                        List<Object> data = new ArrayList<Object>();
-                        data.add(key);
-                        int index = maps.get(key) == null ? 2 : maps.get(key) - 1;
-                        if (lineArr.length > index) {
-//                            data.add(describe(key,lineArr.length>index?lineArr[maps.get(key)-1]:""));
-                            fileValues.put(key, describe(key, lineArr.length > index ? lineArr[index] : ""));
-                        } else {
-                            System.out.println("error column key " + key + " line " + line + " file " + subFile.getName());
-                        }
-                    }
-                    preLineText = updatePreLine(line, preLineText);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return fileValues;
-        })).map(c -> c.join()).collect(Collectors.toList());
-
-        addToOut(outputDatalist,allResult);
-        sortList(outputDatalist);
-//        out.close();
-        String path = "/Users/wangjiaxing/IdeaProjects/springbootprac";
-        String fileName = outFileName;
-
-        File file1 = createCSVFile(exportData, outputDatalist, path, fileName);
-        String fileName2 = file1.getName();
-        System.out.println("文件名称：" + fileName2);
     }
+
+    private static void scan() throws FileNotFoundException {
+        scan(new File(outFileDic+baseSourceName+"/"));
+    }
+
+
+    private static void scan(File scanDic) throws FileNotFoundException {
+        if(!scanDic.isDirectory()) {
+            return;
+        }
+        List<File> subDics = new ArrayList();
+        List<File> subFiles = new ArrayList();
+        for (File file : scanDic.listFiles()) {
+            if (file.isDirectory()) {
+                subDics.add(file);
+            } else {
+                subFiles.add(file);
+            }
+        }
+        if(subFiles.size()>0) {
+            List<Object> exportData = new ArrayList<Object>();
+            headerSortList.stream().forEach(it->{
+                exportData.add(it);
+            });
+            List<List<Object>> outputDatalist = new ArrayList<List<Object>>();
+
+            List<Map<String, String>> allResult = subFiles.stream().map(subFile -> CompletableFuture.supplyAsync(() -> {
+                Map<String, String> fileValues = new HashMap<>();
+                String preLineText = "";
+                String line = "";
+                String SplitBy = ";";
+                String[] lineArr;
+                try (BufferedReader br = new BufferedReader(new FileReader(subFile))) {
+                    while ((line = br.readLine()) != null) {
+                        lineArr = line.split(SplitBy);
+                        String key = findKey(line, ketSet, preLineText);
+                        if (StringUtils.isNotBlank(key)) {
+                            List<Object> data = new ArrayList<Object>();
+                            data.add(key);
+                            int index = maps.get(key) == null ? 2 : maps.get(key) - 1;
+                            if (lineArr.length > index) {
+//                            data.add(describe(key,lineArr.length>index?lineArr[maps.get(key)-1]:""));
+                                fileValues.put(key, describe(key, lineArr.length > index ? lineArr[index] : ""));
+                            } else {
+                                System.out.println("error column key " + key + " line " + line + " file " + subFile.getName());
+                            }
+                        }
+                        preLineText = updatePreLine(line, preLineText);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                return fileValues;
+            })).map(c -> c.join()).collect(Collectors.toList());
+
+            addToOut(outputDatalist,allResult);
+            sortList(outputDatalist);
+//        out.close();
+            String fileName = scanDic.getName();
+
+            File file1 = createCSVFile(exportData, outputDatalist, scanDic.getPath().replace(baseSourceName,baseOutName), fileName);
+            String fileName2 = file1.getPath();
+            System.out.println("输出文件名称：" + fileName2);
+        }
+
+
+        for (File subDic : subDics) {
+            scan(subDic);
+        }
+
+    }
+
+    private static void renameFile() throws FileNotFoundException {
+        File pfile = ResourceUtils.getFile("classpath:"+baseSourceName);
+        File file = new File(outFileDic);
+        FileSystemUtils.deleteRecursively(file);
+        file.mkdirs();
+        renameFile(pfile, outFileDic);
+    }
+
+    private static void renameFile(File pfile,String filePath) {
+        if(!pfile.isDirectory()) {
+            return;
+        }
+        filePath = filePath + pfile.getName()+"/";
+        File dic = new File(filePath);
+        if(!dic.exists()) {
+            dic.mkdirs();
+        }
+        List<File> subDics = new ArrayList();
+        List<File> subFiles = new ArrayList();
+        for (File file : pfile.listFiles()) {
+            if (file.isDirectory()) {
+                subDics.add(file);
+            } else {
+                subFiles.add(file);
+            }
+        }
+        if(subFiles.size()>0) {
+            for (int i = 0; i < subFiles.size(); i++) {
+                File file1 = subFiles.get(i);
+                File mm=new File(filePath+pfile.getName()+"_sub"+i+".txt");
+                file1.renameTo(mm);
+            }
+        }
+
+        for (File subDic : subDics) {
+            renameFile(subDic,filePath);
+        }
+    }
+
 
     private static String updatePreLine(String currentLine,String preLine) {
         if(StringUtils.isBlank(currentLine) || (!preLineHitSet(currentLine)) && currentLine.contains("Segment ")) {
