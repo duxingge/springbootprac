@@ -3,7 +3,6 @@ package com.example.javafunction.service.wandou.execel;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.google.common.io.Files;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.FileSystemUtils;
 import org.springframework.util.ResourceUtils;
@@ -25,8 +24,9 @@ public class Scan {
     static final String baseSourceName= "csvs";
     static final String baseOutName= "csvsResult";
     static final String outFileName = "icp3";
-    static Set<String> preLineSets = Sets.newHashSet("LV 24-Segment FS Values[%]","RV 24-Segment FS Values[%]","LV 24-Segment SI Values[%]","RV 24-Segment SI Values[%]","LV 24-Segment ED Values[mm]","RV 24-Segment ED Values[mm]");
-    static List<String> coreList = Lists.newArrayList("Segment 1;","Segment 2;","Segment 3;","Segment 4;","Segment 5;","Segment 6;","Segment 7;","Segment 8;","Segment 9;","Segment 10;","Segment 11;","Segment 12;","Segment 13;","Segment 14;","Segment 15;","Segment 16;","Segment 17;","Segment 18;","Segment 19;","Segment 20;","Segment 21;","Segment 22;","Segment 23;","Segment 24;");
+//    static Set<String> preLineSets = Sets.newHashSet("LV 24-Segment FS Values[%]","RV 24-Segment FS Values[%]","LV 24-Segment SI Values[%]","RV 24-Segment SI Values[%]","LV 24-Segment ED Values[mm]","RV 24-Segment ED Values[mm]");
+static Set<String> preLineSets = Sets.newHashSet("LV 24-Segment FS Values[%]","RV 24-Segment FS Values[%]","LV 24-Segment SI Values[%]","RV 24-Segment SI Values[%]","LV 24-Segment ED Values[mm]","RV 24-Segment ED Values[mm]","LV 24-Segment FS Z-Scores[]","RV 24-Segment FS Z-Scores[]","LV 24-Segment SI Z-Scores[]","RV 24-Segment SI Z-Scores[]","LV 24-Segment ED Z-Scores (AUA)[]","RV 24-Segment ED Z-Scores (AUA)[]");
+    static List<String> coreList = Lists.newArrayList("Segment 1","Segment 2","Segment 3","Segment 4","Segment 5","Segment 6","Segment 7","Segment 8","Segment 9","Segment 10","Segment 11","Segment 12","Segment 13","Segment 14","Segment 15","Segment 16","Segment 17","Segment 18","Segment 19","Segment 20","Segment 21","Segment 22","Segment 23","Segment 24");
     static int nameIndex = 0;
     private static final String outFileDic = "/Users/wangjiaxing/study/test-code/wandou/";
 
@@ -79,6 +79,40 @@ public class Scan {
         maps.put("LV_ FreeWall Strain.Lt FWS %[%]",3);
         maps.put("LV_ Sept.Wall Strain.Lt SWS %[%]",3);
         maps.put("RV_ Sept.Wall Strain.Rt SWS %[%]",3);
+        //
+
+        maps.put("Mid Cereb Artery.PI_Lt[]",3);
+        maps.put("Mid Cereb Artery.PI_Rt[]",3);
+        maps.put("Umbilical Art..PI[]",3);
+        maps.put("LV_ Global Strain.Lt GLS ZS[]",3);
+        maps.put("RV_ Global Strain.Rt GLS ZS[]",3);
+        maps.put("LV_ Frac. Area change.Lt FRAC ZS(AUA)[]",3);
+        maps.put("RV_ Frac. Area change.Rt FRAC ZS(AUA)[]",3);
+        maps.put("LV_ EF.Lt EF ZS(AUA)[]",3);
+        maps.put("LV_ SV.Lt SV ZS(AUA)[]",3);
+        maps.put("LV_ SV/KG.Lt SV/KG ZS(AUA)[]",3);
+        maps.put("LV_ CO.Lt CO ZS(AUA)[]",3);
+        maps.put("LV_ CO/KG.Lt CO/KG ZS(AUA)[]",3);
+        maps.put("4CV GSI.GSI ZS[]",3);
+        maps.put("4CV Trv. Width ED[mm",3);
+        maps.put("4CV Trv. Width ED.4CV TW ED ZS(AUA)[]]",3);
+        maps.put("4CV Length ED[mm]",3);
+        maps.put("4CV Length ED.4CV L ED ZS(AUA)[]",3);
+        maps.put("4CV Area (2Dist)[mm淫",3);
+        maps.put("LV_ EDV.Lt EDV ZS(AUA)[]",3);
+        maps.put("LV_ FreeWall Strain.Lt FWS ZS[]",3);
+        maps.put("LV_ Sept.Wall Strain.Lt SWS ZS[]",3);
+        maps.put("RV_ Sept.Wall Strain.Rt SWS ZS[]",3);
+        maps.put("RV_ FreeWall Strain.Rt FWS ZS[]",3);
+        maps.put("LV_ MAPSE septal.MAPSE sept. ZS(AUA)[]",3);
+        maps.put("LV_ MAPSE lateral.MAPSE lat. ZS(AUA)[]",3);
+        maps.put("RV_ TAPSE septal.TAPSE sept. ZS(AUA)[]",3);
+        maps.put("LV_ Basal-Lat.Wall FS.Lt Basal-Lat FS ZS(AUA)[]",3);
+        maps.put("RV_ Basal-Lat.Wall FS.Rt Basal-Lat FS ZS(AUA)[]",3);
+        maps.put("LV_ Basal-Sep.Wall FS.Lt Basal-Sep FS ZS(AUA)[]",3);
+        maps.put("RV_ Basal-Sep.Wall FS.Rt Basal-Sep FS ZS(AUA)[]",3);
+        maps.put("LV_ Basal-Apical FS.Lt BASE-AP FS ZS[]",3);
+        maps.put("RV_ Basal-Apical FS.Rt BASE-AP FS ZS[]",3);
 
 
 
@@ -140,8 +174,6 @@ public class Scan {
                         lineArr = line.split(SplitBy);
                         String key = findKey(line, ketSet, preLineText);
                         if (StringUtils.isNotBlank(key)) {
-                            List<Object> data = new ArrayList<Object>();
-                            data.add(key);
                             int index = maps.get(key) == null ? 2 : maps.get(key) - 1;
                             if (lineArr.length > index) {
 //                            data.add(describe(key,lineArr.length>index?lineArr[maps.get(key)-1]:""));
@@ -248,28 +280,28 @@ public class Scan {
         return value;
     }
 
-    private static String findKey(String line, Set<String> keys,String preLine) {
+    private static String findKey(String line, Set<String> keys, String preLine) {
+        if(StringUtils.isBlank(line)) {
+            return null;
+        }
         for (String key : keys) {
-            if(line.contains(key)) {
+            if (line.contains(key)) {
                 return key;
             }
-            if(line.contains("Segment ") && preLineHitSet(preLine)) {
-                String preFix = preLineSets.stream().filter(it -> preLine.contains(it)).findAny().get();
-                if(key.contains(line.split(";")[1]+";") && key.contains(preFix)) {
-                        return key;
-                    }
+            if (line.contains("Segment ") && !preLineHitSet(line) && preLineHitSet(preLine)) {
+                if (key.equals(String.format("%s %s", preLine.replace(";", ""), line.split(";")[1]))) {
+                    return key;
                 }
             }
+        }
+        if(!line.contains("24-Segment")) {
+            System.out.println(String.format("current line:  %s  parentLine: %s not found!!", line, preLine));
+        }
         return null;
     }
 
-    private static boolean preLineHitSet(String preLine) {
-        for (String preLineSet : preLineSets) {
-            if(preLine.contains(preLineSet)) {
-                return true;
-            }
-        }
-        return false;
+    private static boolean preLineHitSet(String currentLine) {
+        return currentLine.contains("24-Segment");
     }
 
 
