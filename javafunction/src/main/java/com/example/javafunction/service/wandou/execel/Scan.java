@@ -8,6 +8,7 @@ import org.springframework.util.FileSystemUtils;
 import org.springframework.util.ResourceUtils;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
@@ -35,31 +36,31 @@ static Set<String> preLineSets = Sets.newHashSet("LV 24-Segment FS Values[%]","R
         maps.put("Patient",3);
         maps.put("Exam Date",3);
         maps.put("GA (clin)[w+d]",3);
-        maps.put("OB_AC_HADLOCK;AC (Hadlock)[cm]",3);
-        maps.put("OB_BPD_HADLOCK;BPD (Hadlock)[cm]",3);
-        maps.put("OB_EFW;EFW (Hadlock)[]",3);
-        maps.put("OB_FL_HADLOCK;FL (Hadlock)[cm]",3);
-        maps.put("OB_HC_HADLOCK;HC (Hadlock)[cm]",3);
-        maps.put("OB_ZSCORE_VENTR_GLS.GLS_L;LV_ Global Strain[%]",3);
-        maps.put("OB_ZSCORE_VENTR_GLS.GLS_R;RV_ Global Strain[%]",3);
-        maps.put("OB_ZSCORE_VENTR_FRAC.FRAC_L;LV_ Frac. Area change[%]",3);
-        maps.put("OB_ZSCORE_VENTR_FRAC.FRAC_R;RV_ Frac. Area change[%]",3);
-        maps.put("OB_ZSCORE_VENTR_EF.EF_L;LV_ EF[%]",3);
-        maps.put("OB_ZSCORE_VENTR_SV.SV_L;LV_ SV[ml]",3);
-        maps.put("OB_ZSCORE_VENTR_SV_KG.SV_KG_L;LV_ SV/KG[ml/kg]",3);
-        maps.put("OB_ZSCORE_VENTR_CO.CO_L;LV_ CO[ml/min]",3);
-        maps.put("OB_ZSCORE_VENTR_CO_KG.CO_KG_L;LV_ CO/KG[ml/min/kg]",3);
-        maps.put("LV_ ED Area",3);
-        maps.put("LV_ ED Length",3);
-        maps.put("LV_ ES Area",3);
-        maps.put("LV_ ES Length",3);
+        maps.put("AC (Hadlock)[cm]",3);
+        maps.put("BPD (Hadlock)[cm]",3);
+        maps.put("EFW (Hadlock)[]",3);
+        maps.put("FL (Hadlock)[cm]",3);
+        maps.put("HC (Hadlock)[cm]",3);
+        maps.put("LV_ Global Strain[%]",3);
+        maps.put("RV_ Global Strain[%]",3);
+        maps.put("LV_ Frac. Area change[%]",3);
+        maps.put("RV_ Frac. Area change[%]",3);
+        maps.put("LV_ EF[%]",3);
+        maps.put("LV_ SV[ml]",3);
+        maps.put("LV_ SV/KG[ml/kg]",3);
+        maps.put("LV_ CO[ml/min]",3);
+        maps.put("LV_ CO/KG[ml/min/kg]",3);
+        maps.put("LV_ ED Area[cm²]",3);
+        maps.put("LV_ ED Length[cm]",3);
+        maps.put("LV_ ES Area[cm²]",3);
+        maps.put("LV_ ES Length[cm]",3);
         maps.put("LV_ EDV[ml]",3);
         maps.put("LV_ ESV[ml]",3);
-        maps.put("RV_ ED Area",3);
-        maps.put("RV_ ED Length",3);
-        maps.put("RV_ ES Area",3);
-        maps.put("RV_ ES Length",3);
-        maps.put("OB_ZSCORE_GSI.GSI; 4CV GSI[]",3);
+        maps.put("RV_ ED Area[cm²]",3);
+        maps.put("RV_ ED Length[cm]",3);
+        maps.put("RV_ ES Area[cm²]",3);
+        maps.put("RV_ ES Length[cm]",3);
+        maps.put("4CV GSI[]",3);
         maps.put("RV_ FreeWall Strain[%]",3);
         maps.put("LV_ MAPSE septal[mm]",3);
         maps.put("LV_ MAPSE lateral[mm]",3);
@@ -94,11 +95,11 @@ static Set<String> preLineSets = Sets.newHashSet("LV 24-Segment FS Values[%]","R
         maps.put("LV_ CO.Lt CO ZS(AUA)[]",3);
         maps.put("LV_ CO/KG.Lt CO/KG ZS(AUA)[]",3);
         maps.put("4CV GSI.GSI ZS[]",3);
-        maps.put("4CV Trv. Width ED[mm",3);
-        maps.put("4CV Trv. Width ED.4CV TW ED ZS(AUA)[]]",3);
+        maps.put("4CV Trv. Width ED[mm]",3);
+        maps.put("4CV Trv. Width ED.4CV TW ED ZS(AUA)[]",3);
         maps.put("4CV Length ED[mm]",3);
         maps.put("4CV Length ED.4CV L ED ZS(AUA)[]",3);
-        maps.put("4CV Area (2Dist)[mm淫",3);
+        maps.put("4CV Area (2Dist)[mm²]",3);
         maps.put("LV_ EDV.Lt EDV ZS(AUA)[]",3);
         maps.put("LV_ FreeWall Strain.Lt FWS ZS[]",3);
         maps.put("LV_ Sept.Wall Strain.Lt SWS ZS[]",3);
@@ -169,7 +170,7 @@ static Set<String> preLineSets = Sets.newHashSet("LV 24-Segment FS Values[%]","R
                 String line = "";
                 String SplitBy = ";";
                 String[] lineArr;
-                try (BufferedReader br = new BufferedReader(new FileReader(subFile))) {
+                try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(subFile), StandardCharsets.ISO_8859_1.name()))) {
                     while ((line = br.readLine()) != null) {
                         lineArr = line.split(SplitBy);
                         String key = findKey(line, ketSet, preLineText);
@@ -178,11 +179,14 @@ static Set<String> preLineSets = Sets.newHashSet("LV 24-Segment FS Values[%]","R
                             if (lineArr.length > index) {
 //                            data.add(describe(key,lineArr.length>index?lineArr[maps.get(key)-1]:""));
                                 fileValues.put(key, describe(key, lineArr.length > index ? lineArr[index] : ""));
+                                if(StringUtils.isBlank(fileValues.get(key))) {
+                                    System.out.println(String.format(" %s blank ", key));
+                                }
                             } else {
-                                System.out.println("error column key " + key + " line " + line + " file " + subFile.getName());
+//                                System.out.println("error column key " + key + " line " + line + " file " + subFile.getName());
                             }
                         }
-                        preLineText = updatePreLine(line, preLineText);
+                        preLineText = update24PreLine(line, preLineText);
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -247,11 +251,14 @@ static Set<String> preLineSets = Sets.newHashSet("LV 24-Segment FS Values[%]","R
     }
 
 
-    private static String updatePreLine(String currentLine,String preLine) {
-        if(StringUtils.isBlank(currentLine) || (!preLineHitSet(currentLine)) && currentLine.contains("Segment ")) {
-            return preLine;
+    private static String update24PreLine(String currentLine, String preLine) {
+        if(StringUtils.isBlank(currentLine) || currentLine.contains("24-Segment")) {
+            return currentLine;
         }
-        return currentLine;
+        if(currentLine.contains("Segment 24;")) {
+            return "";
+        }
+        return preLine;
     }
 
     private static void sortList(List<List<Object>> outputDatalist) {
@@ -284,23 +291,26 @@ static Set<String> preLineSets = Sets.newHashSet("LV 24-Segment FS Values[%]","R
         if(StringUtils.isBlank(line)) {
             return null;
         }
+        if(line.split(";").length < 2) {
+            return null;
+        }
         for (String key : keys) {
-            if (line.contains(key)) {
+            if (line.split(";")[1].trim().equals(key.trim())) {
                 return key;
             }
-            if (line.contains("Segment ") && !preLineHitSet(line) && preLineHitSet(preLine)) {
-                if (key.equals(String.format("%s %s", preLine.replace(";", ""), line.split(";")[1]))) {
+            if (line.contains("Segment ") && !pre24LineHitSet(line) && pre24LineHitSet(preLine)) {
+                if (key.trim().equals(String.format("%s %s", preLine.replace(";", "").trim(), line.split(";")[1].trim()))) {
                     return key;
                 }
             }
         }
-        if(!line.contains("24-Segment")) {
-            System.out.println(String.format("current line:  %s  parentLine: %s not found!!", line, preLine));
+        if((StringUtils.isBlank(preLine) && !line.contains("24-Segment")) || preLine.contains("24-Segment") && line.contains("Segment 1;")) {
+//            System.out.println(String.format("current line:  %s   -----   parentLine: %s not export!!", line, preLine));
         }
         return null;
     }
 
-    private static boolean preLineHitSet(String currentLine) {
+    private static boolean pre24LineHitSet(String currentLine) {
         return currentLine.contains("24-Segment");
     }
 
@@ -327,7 +337,7 @@ static Set<String> preLineSets = Sets.newHashSet("LV 24-Segment FS Values[%]","R
 
             // GB2312使正确读取分隔符","
             csvWtriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(
-                    csvFile), "GBK"), 1024);
+                    csvFile), StandardCharsets.ISO_8859_1), 1024);
             // 写入文件头部
             writeRow(head, csvWtriter);
 
